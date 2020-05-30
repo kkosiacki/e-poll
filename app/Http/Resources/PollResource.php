@@ -14,6 +14,11 @@ class PollResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'slug' => $this->slug,
+            'title' => $this->name,
+            'questions' => PollQuestionResource::collection($this->questions),
+
+            ];
     }
 }

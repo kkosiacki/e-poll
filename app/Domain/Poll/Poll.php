@@ -4,6 +4,7 @@ namespace App\Domain\Poll;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Psy\Util\Str;
 
 /**
@@ -14,6 +15,7 @@ use Psy\Util\Str;
  * @property string $slug
  * @property Carbon $from
  * @property Carbon $to
+ * @property Collection $questions
  */
 class Poll extends Model
 {

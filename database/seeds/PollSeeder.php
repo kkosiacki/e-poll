@@ -17,6 +17,8 @@ class PollSeeder extends Seeder
         $poll1 = Poll::create(['slug' =>Str::slug('Glosowanie testowe'),'name' =>'Glosowanie testowe','from' => \Illuminate\Support\Carbon::minValue(),'to' => \Carbon\Carbon::maxValue()]);
         /** @var Poll $poll2 */
         $poll2 = Poll::create(['slug' =>Str::slug('Glosowanie testowe nie aktywne'),'name' =>'Glosowanie testowe nie aktywne','from' => \Illuminate\Support\Carbon::minValue(),'to' => \Carbon\Carbon::now()->addDays(-1)]);
+        /** @var Poll $poll3 */
+        $poll3 = Poll::create(['slug' =>Str::slug('Glosowanie testowe3'),'name' =>'glosowanie testowe3','from' => \Illuminate\Support\Carbon::minValue(),'to' => \Carbon\Carbon::maxValue()]);
 
 
         $poll1->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Kto zostanie prezydentem Polski','slug' => Str::slug('dasdas_fhdsuufds')])->answers()->createMany(
@@ -44,5 +46,12 @@ class PollSeeder extends Seeder
                 ['answer' => 'Berlin Racing Team','slug' => Str::slug('Berlin Racing Team')]
             ]
         );
+        $poll3->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Jaki system operacyjny używasz w lapku swym z którym chodzisz po miastach i wsiach polski?','slug' => Str::slug('Jaki system operacyjny używasz w lapku swym z którym chodzisz po miastach i wsiach polski?')])->answers()->createMany(
+            [
+                ['answer' => 'Windows','slug' => Str::slug('Windows')],
+                ['answer' => 'Inny gorszy','slug' => Str::slug('Inny gorszy')],
+            ]
+        );
+
     }
 }

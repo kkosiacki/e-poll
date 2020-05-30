@@ -19,7 +19,6 @@ class CreatePollQuestionsTable extends Migration
             $table->string('slug')->nullable(false);
             $table->string('type')->nullable(false);
             $table->unsignedInteger('poll_id')->nullable(false);
-            $table->timestamps();
             $table->foreign('poll_id')->references('id')->on('polls');
         });
     }

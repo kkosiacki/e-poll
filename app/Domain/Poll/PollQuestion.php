@@ -3,6 +3,7 @@
 namespace App\Domain\Poll;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * Class PollQuestion
@@ -11,12 +12,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $type
  * @property string $question
  * @property Poll $poll
+ * @property Collection $answers
  */
 class PollQuestion extends Model
 {
     protected $fillable = ['type','question','slug'];
 
-    protected $hidden = ['id'];
+    protected $hidden = ['id','poll_id'];
+
+    public $timestamps = false;
 
     const MULTI = 'multi';
     const SINGLE = 'single';
