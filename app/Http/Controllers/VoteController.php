@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Votes\VoteAnswer;
+use App\Http\Resources\VerifiedVoteAnswerResource;
 use App\Http\Resources\VoteAnswerResource;
 use App\Services\VoteService;
 use Illuminate\Http\Request;
@@ -23,10 +24,12 @@ class VoteController extends Controller
         $this->vote_service = $vote_service;
     }
 
-    public function verify(Request $request) {
+    public function verifyVote(Request $request) {
         $file_name =  $request->file('file')->store('to_verify');
 
-        $this->vote_service->verifyVoteFile($file_name);
+        /** @var VoteAnswer $vote */
+        $vote = $this->vote_service->verifyVoteFile($file_name);
+        return new VerifiedVoteAnswerResource($vote);
     }
 
     public function vote(Request $request) {

@@ -3,6 +3,7 @@
 namespace App\Domain\Votes;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 
@@ -11,6 +12,10 @@ use Illuminate\Support\Collection;
  * @package App\Domain\Votes
  * @property string $uuid
  * @property string $status
+ * @property string $pesel
+ * @property string $first_name
+ * @property string $last_name
+ * @property Carbon $signature_date
  * @property Collection $vote_answer_items
  */
 class VoteAnswer extends Model
@@ -21,6 +26,10 @@ class VoteAnswer extends Model
     protected $hidden = ['id'];
 
     protected $with = ['vote_answer_items'];
+
+    protected $dates = [
+        'signature_date',
+    ];
 
     protected $attributes = [
         'status' => self::STATUS_CREATED,

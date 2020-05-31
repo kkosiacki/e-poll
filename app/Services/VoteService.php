@@ -9,24 +9,63 @@ use App\Domain\Poll\PollAnswer;
 use App\Domain\Poll\PollQuestion;
 use App\Domain\Votes\VoteAnswer;
 use App\Domain\Votes\VoteAnswerItem;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use stdClass;
+use Opis\JsonSchema\{
+    Validator, ValidationResult, ValidationError, Schema
+};
 
 class VoteService
 {
 
     //TODO: just upload file and verify in ePUAP - more to do
-    // 1. validate base64 document content vs database
-    // 2. sync and (future async)
+    // 1. sync and (future async)
     public function verifyVoteFile(string $file_name) {
         if(!Storage::exists($file_name)) {
             throw ValidationException::withMessages(['file' => 'Brak pliku do walidacji']);
         } else {
-            info("[VoteService] Verify file ${file_name}");
+            /** @var VoteAnswer $vote_answer */
+            $vote_answer = $this->verifyFileContent(Storage::get($file_name));
+            info('VoteAnswer found nad valid',[$vote_answer->uuid]);
+            $epuap_answer = $this->veriifyInePUAP($file_name);
+            if(VoteAnswer::query()->where('pesel',$epuap_answer->pesel)->exists()) {
+                throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal']);
+            } else {
+                $vote_answer->pesel = $epuap_answer->pesel;
+                $vote_answer->first_name = $epuap_answer->firstName;
+                $vote_answer->last_name = $epuap_answer->lastName;
+                $vote_answer->signature_date = $epuap_answer->signatureDate;
+                $vote_answer->status = VoteAnswer::STATUS_VERIFIED;
+                $vote_answer->update();
+                return $vote_answer;
+            }
+
+
+        }
+    }
+
+
+    public function saveVote(array $votes) {
+        /** @var  $vote */
+        $vote_answer = new VoteAnswer();
+        $vote_answer->uuid = Str::uuid();
+        $vote_answers_items = $this->validateVote($votes);
+
+        return DB::transaction(function() use($vote_answer,$vote_answers_items) {
+            $vote_answer->save();
+            $vote_answer->vote_answer_items()->saveMany($vote_answers_items);
+            return $vote_answer;
+        });
+    }
+
+    protected function veriifyInePUAP(string $file_name) {
+
+            info("[VoteService] veriifyInePUAP ${file_name}");
             $client = new \GuzzleHttp\Client(['cookies' => true,'headers' => [
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
             ]]);
@@ -45,32 +84,30 @@ class VoteService
             );
             $status = json_decode($response->getBody()->getContents());
             if($status->status == 'OK') {
-            info('File uploaded succesfully');
+                info('File uploaded succesfully');
                 $verify_response = $client->get(config('e-poll.verify_url'));
                 if($verify_response->getStatusCode() != 200) {
-                    log()->error('Wrong answer status',[$status->status]);
+                    logger()->error('Wrong answer status',[$status->status]);
+                    throw ValidationException::withMessages(['file' => 'Nieudana weryfikacja w ePUAP']);
                 } else {
-                    $verify_json = $verify_response->getBody()->getContents();
+                    $response_string =$verify_response->getBody()->getContents();
+                    info('response from epuap '.$response_string);
+                     $json_string = json_decode($response_string);
+                    if($json_string) {
+                        //Always one element array
+                        return head($json_string);
+                    } else {
+                        logger()->error('NIe udalo sie zjesonowac stringa',[$json_string]);
+                        throw ValidationException::withMessages(['file' => 'Nieudana weryfikacja w ePUAP']);
+                    }
+
                 }
             } else {
-                log()->error('Wrong ststaus',[$status->status]);
+                logger()->error('Wrong ststaus',[$status->status]);
+                throw ValidationException::withMessages(['file' => 'Nieudana weryfikacja w ePUAP']);
             }
 
-        }
-    }
 
-
-    public function saveVote(array $votes) {
-        /** @var  $vote */
-        $vote_answer = new VoteAnswer();
-        $vote_answer->uuid = Str::uuid();
-        $vote_answers_items = $this->validateVote($votes);
-
-        return DB::transaction(function() use($vote_answer,$vote_answers_items) {
-            $vote_answer->save();
-            $vote_answer->vote_answer_items()->saveMany($vote_answers_items);
-            return $vote_answer;
-        });
     }
 
     protected function validateVote(array $votes) {
@@ -188,6 +225,49 @@ class VoteService
         } else {
             $errors->put('vote.questions.answers.slug', 'Brakuje \'answer\' przy odpowiedziach');
         }
+    }
+
+    private function verifyFileContent(string $content) :VoteAnswer
+    {
+
+        $epuap_xml = simplexml_load_string($content);
+        $epuap_xml->registerXPathNamespace('wnio','http://epuap.gov.pl/fe-model-web/wzor_lokalny/EPUAP-----/podpisanyPlik/');
+        $epuap_xml->registerXPathNamespace('str','http://crd.gov.pl/xml/schematy/struktura/2009/11/16/');
+        $xpathArray = $epuap_xml->xpath('/wnio:Dokument/wnio:TrescDokumentu/str:Zalaczniki/str:Zalacznik/str:DaneZalacznika');
+        if($xpathArray) {
+            $content = json_decode(base64_decode((string) $xpathArray[0]));
+            if($content) {
+                $schema = Schema::fromJsonString(File::get(base_path('').'/vote_schema.json'));
+                $validator = new Validator();
+
+                /** @var ValidationResult $result */
+                $result = $validator->schemaValidation($content, $schema);
+                if($result->isValid()) {
+                    return $this->ckeclVoteAnswers($content);
+                }
+            }
+        }
+        throw ValidationException::withMessages(['file' => 'Zly format pliku podpisu']);
+    }
+
+    private function ckeclVoteAnswers(StdClass $content) :VoteAnswer
+    {
+        info('fdsifsudh',[$content]);
+        /** @var VoteAnswer  $vote_answer */
+        $vote_answer = VoteAnswer::query()->where('uuid',$content->id)->firstOrFail();
+        if(count($content->odpowiedzi) === $vote_answer->vote_answer_items()->count()) {
+            foreach ($content->odpowiedzi as $vote_answer_item) {
+                if(!$vote_answer->vote_answer_items->contains(function (VoteAnswerItem $item) use ($vote_answer_item) {
+                    return $item->poll->slug === $vote_answer_item->glosowanie &&
+                        $item->poll_question->slug === $vote_answer_item->pytanie &&
+                        $item->poll_answer->slug === $vote_answer_item->odpowiedz;
+                })){
+                    throw ValidationException::withMessages(['file' => 'Zle dane w podpisanym pliku']);
+                }
+            }
+            return $vote_answer;
+        }
+        throw ValidationException::withMessages(['file' => 'Zle dane w podpisanym pliku']);
     }
 
 }

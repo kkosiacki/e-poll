@@ -17,6 +17,10 @@ class CreateVoteAnswersTable extends Migration
             $table->id();
             $table->string('status')->nullable(false);
             $table->string('uuid')->nullable(false);
+            $table->string('pesel')->nullable(true);
+            $table->dateTime('signature_date')->nullable(true);
+            $table->string('first_name')->nullable(true);
+            $table->string('last_name')->nullable(true);
             $table->timestamps();
         });
     }

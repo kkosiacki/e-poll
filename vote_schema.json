@@ -1,0 +1,148 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "Schema for Voting Objects",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "id": "ce71d34a-a7c1-4916-a434-10cbb2add6ab",
+            "stworzono": "2020-05-30T09:29:37.000000Z",
+            "odpowiedzi": [
+                {
+                    "glosowanie": "glosowanie-testowe",
+                    "pytanie": "dasdas-fhdsuufds",
+                    "odpowiedz": "adrian"
+                },
+                {
+                    "glosowanie": "glosowanie-testowe",
+                    "pytanie": "ulubione-knajpy",
+                    "odpowiedz": "zakaski-przekaski"
+                },
+                {
+                    "glosowanie": "glosowanie-testowe",
+                    "pytanie": "ulubione-knajpy",
+                    "odpowiedz": "zapiecek"
+                },
+                {
+                    "glosowanie": "glosowanie-testowe",
+                    "pytanie": "ulubione-knajpy",
+                    "odpowiedz": "u-magdy-gessler"
+                },
+                {
+                    "glosowanie": "glosowanie-testowe3",
+                    "pytanie": "jaki-system-operacyjny-uzywasz-w-lapku-swym-z-ktorym-chodzisz-po-miastach-i-wsiach-polski",
+                    "odpowiedz": "windows"
+                }
+            ]
+        }
+    ],
+    "required": [
+        "id",
+        "stworzono",
+        "odpowiedzi"
+    ],
+    "additionalProperties": true,
+    "properties": {
+        "id": {
+            "$id": "#/properties/id",
+            "type": "string",
+            "title": "The id schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "ce71d34a-a7c1-4916-a434-10cbb2add6ab"
+            ]
+        },
+        "stworzono": {
+            "$id": "#/properties/stworzono",
+            "type": "string",
+            "title": "The stworzono schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "2020-05-30T09:29:37.000000Z"
+            ]
+        },
+        "odpowiedzi": {
+            "$id": "#/properties/odpowiedzi",
+            "type": "array",
+            "title": "The odpowiedzi schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "glosowanie": "glosowanie-testowe",
+                        "pytanie": "dasdas-fhdsuufds",
+                        "odpowiedz": "adrian"
+                    },
+                    {
+                        "glosowanie": "glosowanie-testowe",
+                        "pytanie": "ulubione-knajpy",
+                        "odpowiedz": "zakaski-przekaski"
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "anyOf": [
+                    {
+                        "$id": "#/properties/odpowiedzi/items/anyOf/0",
+                        "type": "object",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "glosowanie": "glosowanie-testowe",
+                                "pytanie": "dasdas-fhdsuufds",
+                                "odpowiedz": "adrian"
+                            }
+                        ],
+                        "required": [
+                            "glosowanie",
+                            "pytanie",
+                            "odpowiedz"
+                        ],
+                        "additionalProperties": true,
+                        "properties": {
+                            "glosowanie": {
+                                "$id": "#/properties/odpowiedzi/items/anyOf/0/properties/glosowanie",
+                                "type": "string",
+                                "title": "The glosowanie schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "glosowanie-testowe"
+                                ]
+                            },
+                            "pytanie": {
+                                "$id": "#/properties/odpowiedzi/items/anyOf/0/properties/pytanie",
+                                "type": "string",
+                                "title": "The pytanie schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "dasdas-fhdsuufds"
+                                ]
+                            },
+                            "odpowiedz": {
+                                "$id": "#/properties/odpowiedzi/items/anyOf/0/properties/odpowiedz",
+                                "type": "string",
+                                "title": "The odpowiedz schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "adrian"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "$id": "#/properties/odpowiedzi/items"
+            }
+        }
+    }
+}
