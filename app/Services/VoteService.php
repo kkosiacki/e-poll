@@ -63,6 +63,7 @@ class VoteService
         });
     }
 
+
     protected function veriifyInePUAP(string $file_name) {
 
             info("[VoteService] veriifyInePUAP ${file_name}");

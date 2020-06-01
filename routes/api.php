@@ -22,6 +22,8 @@ Route::post('verify', 'VoteController@verifyVote');
 
 
 Route::get('polls/active', 'PollController@getAllActive');
+Route::get('polls/finished', 'PollController@getAllFinished');
+Route::get('results/{poll_slug}', 'PollController@getResults');
 
 
 Route::post('votes','VoteController@vote');
