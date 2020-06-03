@@ -26,13 +26,20 @@ class PollController extends Controller
 
         $raw_answer = DB::select('SELECT i.poll_question_id, i.poll_answer_id
             , COUNT(i.vote_answer_id) as count FROM vote_answer_items i RIGHT JOIN vote_answers a ON (i.vote_answer_id = a.id AND a.status = \''.VoteAnswer::STATUS_VERIFIED.'\') WHERE poll_id = '.$poll->id.' GROUP BY i.poll_question_id,i.poll_answer_id');
+        info($raw_answer);
          $answer = collect($raw_answer)->map(function ($ans) use ($poll) {
              /** @var PollQuestion $question */
              $question = $poll->questions->whereStrict('id',$ans->poll_question_id)->first();
              /** @var PollAnswer $answer */
              $answer = $question->answers->whereStrict('id',$ans->poll_answer_id)->first();
-             $obj =  ['question_slut' => $question->slug, 'question' => $question->question, 'answer' => $answer->answer,'answer_slug' => $answer->slug, 'count' => $ans->count ];
-             info('soung',$obj);
+             $obj =  [
+                 'poll' => $poll->name,
+                 'poll_slug' => $poll->slug,
+                 'question_slug' => $question->slug,
+                 'question' => $question->question,
+                 'answer' => $answer->answer,
+                 'answer_slug' => $answer->slug,
+                 'count' => $ans->count ];
              return $obj;
          });
         return response()->json($answer);

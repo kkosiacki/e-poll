@@ -19,7 +19,7 @@ class VoteSeeder extends Seeder
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 5],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 6],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 7],
-            ['poll_id'  =>3,'poll_question_id' =>4,'poll_answer_id' => 13],
+            ['poll_id'  =>3,'poll_question_id' =>5,'poll_answer_id' => 18],
         ]);
 
 
@@ -27,7 +27,7 @@ class VoteSeeder extends Seeder
             ['poll_id'  =>1,'poll_question_id' =>1,'poll_answer_id' => 2],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 5],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 6],
-            ['poll_id'  =>3,'poll_question_id' =>4,'poll_answer_id' => 14],
+            ['poll_id'  =>3,'poll_question_id' =>5,'poll_answer_id' => 17],
         ]);
 
         \App\Domain\Votes\VoteAnswer::create(['status' => \App\Domain\Votes\VoteAnswer::STATUS_VERIFIED,'uuid' => 'gdf-a7c1-4916-a434-10cbb2hgfdd6ab'])->vote_answer_items()->createMany([
@@ -35,7 +35,7 @@ class VoteSeeder extends Seeder
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 8],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 6],
             ['poll_id'  =>1,'poll_question_id' =>2,'poll_answer_id' => 7],
-            ['poll_id'  =>3,'poll_question_id' =>4,'poll_answer_id' => 14],
+            ['poll_id'  =>3,'poll_question_id' =>5,'poll_answer_id' => 17],
         ]);
 
     }

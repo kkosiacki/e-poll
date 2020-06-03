@@ -37,6 +37,14 @@ class PollSeeder extends Seeder
                 ['answer' => 'Nie jadam na miescie','slug' => Str::slug('Nie jadam na miescie')]
             ]
         );
+            $poll1->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Który utwor jest najfajniejszy','slug' => Str::slug('Który utwor jest najfajniejszy')])->answers()->createMany(
+                 [
+                     ['answer' => 'Mój sokole','slug' => Str::slug('Mój sokole')],
+                     ['answer' => 'Mój jest ten kawałek podłogi','slug' => Str::slug('Mój jest ten kawałek podłogi')],
+                     ['answer' => 'Mój ból jest gorszy niż twój','slug' => Str::slug('Mój ból jest gorszy niż twój')],
+                     ['answer' => 'Meluzyna','slug' => Str::slug('Meluzyna')]
+                 ]
+        );
 
         $poll2->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Kto zostanie mistrzem Polski','slug' => Str::slug('Kto zostanie mistrzem Polski')])->answers()->createMany(
             [
