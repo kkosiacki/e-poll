@@ -209,7 +209,7 @@ class VoteService
     private function validateSingleAnswer($vote_answer, PollQuestion $question, Collection $errors)
     {
         if (array_key_exists('answer', $vote_answer)) {
-            $slug = $vote_answer['answer'];
+            $slug = (string) $vote_answer['answer'];
             /** @var PollAnswer $poll_answer */
             $poll_answer = $question->answers->first(function (PollAnswer $answer) use ($slug) {
 
