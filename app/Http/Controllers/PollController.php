@@ -16,6 +16,10 @@ class PollController extends Controller
         return PollResource::collection(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()]])->get());
     }
 
+    public function getPoll(string $poll_slug) {
+        return PollResource::collection(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()]],['slug','=',$poll_slug])->get());
+    }
+
     public function getAllFinished() {
         return PollResource::collection(Poll::query()->where('to','<',Carbon::now())->get());
     }

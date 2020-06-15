@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('verify', 'VoteController@verifyVote');
 
-
+Route::get('polls/{poll_slug}', 'PollController@getPoll');
 Route::get('polls/active', 'PollController@getAllActive');
 Route::get('polls/finished', 'PollController@getAllFinished');
 Route::get('results/{poll_slug}', 'PollController@getResults');
