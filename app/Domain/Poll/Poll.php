@@ -19,6 +19,10 @@ use Psy\Util\Str;
  */
 class Poll extends Model
 {
+    const STATUS_ACTIVE = 'active';
+    const STATUS_FINISHED = 'finished';
+    const STATUS_NOT_STARTED = 'not_started';
+
     protected $fillable = ['name','slug','from','to'];
 
 
@@ -29,5 +33,22 @@ class Poll extends Model
     public function questions()
     {
         return $this->hasMany('App\Domain\Poll\PollQuestion');
+    }
+
+    public function getStatusAttribute()
+    {
+        /** @var Carbon $now */
+        $now = Carbon::now();
+        if($now->isBetween($this->from,$this->to)) {
+            return Poll::STATUS_ACTIVE;
+        }
+        if($now->isAfter($this->to)) {
+            return Poll::STATUS_FINISHED;
+        }
+        if($now->isBefore($this->from)) {
+            return Poll::STATUS_NOT_STARTED;
+        }
+        info('WRONG STATUS',[$this]);
+        return "UNDEFINED";
     }
 }

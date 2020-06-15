@@ -17,6 +17,7 @@ class PollResource extends JsonResource
         return [
             'slug' => $this->slug,
             'title' => $this->name,
+            'status' => $this->status,
             'questions' => PollQuestionResource::collection($this->questions),
 
             ];

@@ -9,20 +9,37 @@ use App\Domain\Votes\VoteAnswer;
 use App\Http\Resources\PollResource;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 
 class PollController extends Controller
 {
-    public function getAllActive() {
-        return PollResource::collection(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()]])->get());
+    public function getPolls() {
+        return PollResource::collection(
+            QueryBuilder::for(Poll::class)
+                ->allowedFilters([
+                    AllowedFilter::callback('status', function (Builder $query, $value) {
+                        if ($value === Poll::STATUS_ACTIVE) {
+                           $query->where([['from','<',Carbon::now()],['to','>',Carbon::now()]]);
+                        } elseif ($value === Poll::STATUS_FINISHED) {
+                            $query->where('to','<',Carbon::now());
+                        } elseif ($value === Poll::STATUS_NOT_STARTED) {
+                            $query->where('from','>',Carbon::now());
+                        }
+                    }),
+                ])->get()
+            //Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()]])->get()
+        );
     }
 
     public function getPoll(string $poll_slug) {
         return new PollResource(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()],['slug','=',$poll_slug]])->firstOrFail());
     }
 
-    public function getAllFinished() {
-        return PollResource::collection(Poll::query()->where('to','<',Carbon::now())->get());
-    }
+    //public function getAllFinished() {
+    //    return PollResource::collection(Poll::query()->where('to','<',Carbon::now())->get());
+    //}
 
     public function getResults(string $poll_slug) {
         /** @var Poll $poll */
