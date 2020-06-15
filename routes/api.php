@@ -20,9 +20,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('verify', 'VoteController@verifyVote');
 
-Route::get('polls/{poll_slug}', 'PollController@getPoll');
+//TODO: not allowed to create polls with slug active or finished
 Route::get('polls/active', 'PollController@getAllActive');
 Route::get('polls/finished', 'PollController@getAllFinished');
+Route::get('polls/{poll_slug}', 'PollController@getPoll');
 Route::get('results/{poll_slug}', 'PollController@getResults');
 
 
