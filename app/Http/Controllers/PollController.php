@@ -28,13 +28,15 @@ class PollController extends Controller
                             $query->where('from','>',Carbon::now());
                         }
                     }),
-                ])->get()
+                ])
+                //->with('questions')
+                ->get()
             //Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()]])->get()
         );
     }
 
     public function getPoll(string $poll_slug) {
-        return new PollResource(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()],['slug','=',$poll_slug]])->firstOrFail());
+        return new PollResource(Poll::query()->where([['from','<',Carbon::now()],['to','>',Carbon::now()],['slug','=',$poll_slug]])->with('questions')->firstOrFail());
     }
 
     //public function getAllFinished() {

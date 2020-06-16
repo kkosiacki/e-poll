@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Domain\Votes\VoteAnswerItem;
 use Illuminate\Http\Resources\Json\JsonResource;
+
+
 
 class VoteAnswerResource extends JsonResource
 {
@@ -15,11 +16,13 @@ class VoteAnswerResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-          'id' => $this->uuid,
-          'stworzono' => $this->created_at,
-          'odpowiedzi' => VoteAnswerItemResource::collection($this->vote_answer_items)
 
+        return [
+            'status' => $this->status,
+            'epuap_podpis' => $this->signature_date,
+            'stworzono' => $this->created_at,
+            'zarejestrowano' => $this->when($this->updated_at->notEqualTo($this->created_at), $this->updated_at),
+            'odpowiedzi' => VoteAnswerItemResource::collection($this->vote_answer_items)
         ];
     }
 }

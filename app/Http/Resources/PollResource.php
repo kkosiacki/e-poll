@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PollResource extends JsonResource
 {
+
+
     /**
      * Transform the resource into an array.
      *
@@ -18,7 +20,9 @@ class PollResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->name,
             'status' => $this->status,
-            'questions' => PollQuestionResource::collection($this->questions),
+            'from' => $this->from,
+            'to' => $this->to,
+            'questions' => PollQuestionResource::collection($this->whenLoaded('questions')),
 
             ];
     }

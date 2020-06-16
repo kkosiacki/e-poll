@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Votes\VoteAnswer;
-use App\Http\Resources\VerifiedVoteAnswerResource;
 use App\Http\Resources\VoteAnswerResource;
+use App\Http\Resources\VoteResource;
 use App\Services\VoteService;
 use Illuminate\Http\Request;
 
@@ -29,7 +29,15 @@ class VoteController extends Controller
 
         /** @var VoteAnswer $vote */
         $vote = $this->vote_service->verifyVoteFile($file_name);
-        return new VerifiedVoteAnswerResource($vote);
+        return new VoteAnswerResource($vote);
+    }
+
+    public function getVote(string $uuid) {
+
+
+        /** @var VoteAnswer $vote */
+        $vote = VoteAnswer::query()->where('uuid',$uuid)->firstOrFail();
+        return new VoteAnswerResource($vote);
     }
 
     public function vote(Request $request) {
@@ -37,7 +45,7 @@ class VoteController extends Controller
         $input = $request->validate(['votes' =>['required']]);
         /** @var VoteAnswer $vote */
         $vote = $this->vote_service->saveVote($input['votes']);
-        $resource = new VoteAnswerResource($vote);
+        $resource = new VoteResource($vote);
         return response($resource->toJson(JSON_PRETTY_PRINT))
             ->withHeaders([
                 'Content-Type' => 'text/plain',

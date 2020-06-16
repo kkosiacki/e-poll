@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Domain\Votes\VoteAnswerItem;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class VerifiedVoteAnswerResource extends JsonResource
+class VoteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +15,11 @@ class VerifiedVoteAnswerResource extends JsonResource
      */
     public function toArray($request)
     {
-        return ['verified' => true, 'pesel' => $this->pesel,'sign_date' => $this->signature_date];
+        return [
+          'id' => $this->uuid,
+          'stworzono' => $this->created_at,
+          'odpowiedzi' => VoteAnswerItemResource::collection($this->vote_answer_items)
+
+        ];
     }
 }
