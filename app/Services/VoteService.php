@@ -34,6 +34,7 @@ class VoteService
             info('VoteAnswer found nad valid',[$vote_answer->uuid]);
             $epuap_answer = $this->veriifyInePUAP($file_name);
             if(VoteAnswer::query()->where('pesel',$epuap_answer->pesel)->exists()) {
+                //TODO: check if the same vote_id -> then error...
                 throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal']);
             } else {
                 $vote_answer->pesel = $epuap_answer->pesel;
@@ -231,7 +232,7 @@ class VoteService
     private function verifyFileContent(string $content) :VoteAnswer
     {
 
-        $epuap_xml = simplexml_load_string($content);
+        $epuap_xml = simplexml_load_string($content,"SimpleXMLElement",);
         $epuap_xml->registerXPathNamespace('wnio','http://epuap.gov.pl/fe-model-web/wzor_lokalny/EPUAP-----/podpisanyPlik/');
         $epuap_xml->registerXPathNamespace('str','http://crd.gov.pl/xml/schematy/struktura/2009/11/16/');
         $xpathArray = $epuap_xml->xpath('/wnio:Dokument/wnio:TrescDokumentu/str:Zalaczniki/str:Zalacznik/str:DaneZalacznika');

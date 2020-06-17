@@ -15,6 +15,7 @@
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "opis/json-schema": "^1.0",
+        "rap2hpoutre/laravel-log-viewer": "^1.6",
         "spatie/laravel-query-builder": "^2.8"
     },
     "require-dev": {
