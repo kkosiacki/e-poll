@@ -33,9 +33,13 @@ class VoteService
             $vote_answer = $this->verifyFileContent(Storage::get($file_name));
             info('VoteAnswer found nad valid',[$vote_answer->uuid]);
             $epuap_answer = $this->veriifyInePUAP($file_name);
-            if(VoteAnswer::query()->where('pesel',$epuap_answer->pesel)->exists()) {
-                //TODO: check if the same vote_id -> then error...
-                throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal']);
+            $recent_votes = VoteAnswer::query()->where('pesel',$epuap_answer->pesel)->get('id');
+            if($recent_votes->isNotEmpty()) {
+                if(VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->exists()) {
+                    $used  = VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->get('poll_id');
+                    throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal '.implode(" ",$used->pluck('poll.slug')->toArray())]);
+
+                }
             } else {
                 $vote_answer->pesel = $epuap_answer->pesel;
                 $vote_answer->first_name = $epuap_answer->firstName;
