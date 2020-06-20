@@ -14,9 +14,9 @@ class PollSeeder extends Seeder
     public function run()
     {
         /** @var Poll $poll1 */
-        $poll1 = Poll::create(['slug' =>Str::slug('Glosowanie testowe'),'name' =>'Glosowanie testowe','from' => \Illuminate\Support\Carbon::minValue(),'to' => \Carbon\Carbon::maxValue()]);
+        $poll1 = Poll::create(['slug' =>Str::slug('Sondaż prezydencki'),'name' =>'Sondaż prezydencki','from' => \Illuminate\Support\Carbon::minValue(),'to' => \Carbon\Carbon::maxValue()]);
 
-        $poll1->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Kto zostanie prezydentem Polski','slug' => Str::slug('dasdas_fhdsuufds')])->answers()->createMany(
+        $poll1->questions()->create(['type' => PollQuestion::SINGLE,'question' => 'Kto zostanie prezydentem w wyborach 2020','slug' => Str::slug('Kto zostanie prezydentem')])->answers()->createMany(
             [
                 ['answer' => 'Robert BIEDROŃ','slug' => Str::slug('Robert BIEDROŃ')],
                 ['answer' => 'Krzysztof BOSAK','slug' => Str::slug('Krzysztof BOSAK')],
