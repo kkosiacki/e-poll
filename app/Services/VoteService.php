@@ -9,6 +9,7 @@ use App\Domain\Poll\PollAnswer;
 use App\Domain\Poll\PollQuestion;
 use App\Domain\Votes\VoteAnswer;
 use App\Domain\Votes\VoteAnswerItem;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -37,7 +38,7 @@ class VoteService
             if($recent_votes->isNotEmpty()) {
                 if(VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->exists()) {
                     $used  = VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->get('poll_id');
-                    throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal '.implode(" ",$used->pluck('poll.slug')->toArray())]);
+                    throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal dla '.implode(" ",$used->pluck('poll.slug')->toArray())]);
 
                 }
             } else {
@@ -235,11 +236,16 @@ class VoteService
 
     private function verifyFileContent(string $content) :VoteAnswer
     {
-
-        $epuap_xml = simplexml_load_string($content,"SimpleXMLElement",);
-        $epuap_xml->registerXPathNamespace('wnio','http://epuap.gov.pl/fe-model-web/wzor_lokalny/EPUAP-----/podpisanyPlik/');
-        $epuap_xml->registerXPathNamespace('str','http://crd.gov.pl/xml/schematy/struktura/2009/11/16/');
-        $xpathArray = $epuap_xml->xpath('/wnio:Dokument/wnio:TrescDokumentu/str:Zalaczniki/str:Zalacznik/str:DaneZalacznika');
+        try {
+            libxml_use_internal_errors(TRUE);
+            $epuap_xml = simplexml_load_string($content, "SimpleXMLElement",);
+            $epuap_xml->registerXPathNamespace('wnio', 'http://epuap.gov.pl/fe-model-web/wzor_lokalny/EPUAP-----/podpisanyPlik/');
+            $epuap_xml->registerXPathNamespace('str', 'http://crd.gov.pl/xml/schematy/struktura/2009/11/16/');
+            $xpathArray = $epuap_xml->xpath('/wnio:Dokument/wnio:TrescDokumentu/str:Zalaczniki/str:Zalacznik/str:DaneZalacznika');
+        } catch (\Throwable $e) {
+            logger()->error("Blad",[$e]);
+            throw ValidationException::withMessages(['file' => 'Zly format pliku podpisu']);
+        }
         if($xpathArray) {
             $content = json_decode(base64_decode((string) $xpathArray[0]));
             if($content) {
