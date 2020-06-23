@@ -16,12 +16,14 @@ use Illuminate\Support\Collection;
  * @property string $first_name
  * @property string $last_name
  * @property Carbon $signature_date
+ * @property string $file_name
  * @property Collection $vote_answer_items
  */
 class VoteAnswer extends Model
 {
     const STATUS_CREATED = 'created';
     const STATUS_VERIFIED = 'verified';
+    const STATUS_OVERWRITTEN = 'overwritten';
 
     protected $hidden = ['id'];
 

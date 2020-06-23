@@ -32,27 +32,37 @@ class VoteService
         } else {
             /** @var VoteAnswer $vote_answer */
             $vote_answer = $this->verifyFileContent(Storage::get($file_name));
-            info('VoteAnswer found nad valid',[$vote_answer->uuid]);
+            $vote_answer->file_name = $file_name;
+            info('VoteAnswer found nad valid', [$vote_answer->uuid]);
             $epuap_answer = $this->veriifyInePUAP($file_name);
-            $recent_votes = VoteAnswer::query()->where('pesel',$epuap_answer->pesel)->get('id');
-            if($recent_votes->isNotEmpty()) {
-                if(VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->exists()) {
-                    $used  = VoteAnswerItem::query()->whereIn('vote_answer_id', $recent_votes->toArray())->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->get('poll_id');
-                    throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal dla '.implode(" ",$used->pluck('poll.slug')->toArray())]);
+            if ($epuap_answer->valid === true) {
+                return DB::transaction(function () use ($epuap_answer, $vote_answer) {
+                    $recent_vote = VoteAnswer::query()->where('pesel', $epuap_answer->pesel)->where('status', VoteAnswer::STATUS_VERIFIED)->first();
+                    if ($recent_vote != null) {
+                        if (VoteAnswerItem::query()->where('vote_answer_id', $recent_vote->id)->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->exists()) {
+                            if (config('e-poll.can_be_override')) {
+                                $recent_vote->status = VoteAnswer::STATUS_OVERWRITTEN;
+                                $recent_vote->update();
+                            } else {
+                                $used = VoteAnswerItem::query()->where('vote_answer_id', $recent_vote->id)->whereIn('poll_id', $vote_answer->vote_answer_items->pluck('poll_id'))->get('poll_id');
+                                throw ValidationException::withMessages(['file' => 'Ten pesel juz glosowal dla ' . implode(" ", $used->pluck('poll.slug')->toArray())]);
+                            }
 
-                }
+                        }
+                    }
+                    $vote_answer->pesel = $epuap_answer->pesel;
+                    $vote_answer->first_name = $epuap_answer->firstName;
+                    $vote_answer->last_name = $epuap_answer->lastName;
+                    $vote_answer->signature_date = $epuap_answer->signatureDate;
+                    $vote_answer->status = VoteAnswer::STATUS_VERIFIED;
+                    $vote_answer->update();
+                    return $vote_answer;
+                });
             } else {
-                $vote_answer->pesel = $epuap_answer->pesel;
-                $vote_answer->first_name = $epuap_answer->firstName;
-                $vote_answer->last_name = $epuap_answer->lastName;
-                $vote_answer->signature_date = $epuap_answer->signatureDate;
-                $vote_answer->status = VoteAnswer::STATUS_VERIFIED;
-                $vote_answer->update();
-                return $vote_answer;
+                throw ValidationException::withMessages(['file' => 'Nieudana weryfikacja w ePUAP']);
             }
-
-
         }
+
     }
 
 
@@ -255,18 +265,21 @@ class VoteService
                 /** @var ValidationResult $result */
                 $result = $validator->schemaValidation($content, $schema);
                 if($result->isValid()) {
-                    return $this->ckeclVoteAnswers($content);
+                    return $this->ckeckVoteAnswers($content);
                 }
             }
         }
         throw ValidationException::withMessages(['file' => 'Zly format pliku podpisu']);
     }
 
-    private function ckeclVoteAnswers(StdClass $content) :VoteAnswer
+    private function ckeckVoteAnswers(StdClass $content) :VoteAnswer
     {
         info('fdsifsudh',[$content]);
         /** @var VoteAnswer  $vote_answer */
         $vote_answer = VoteAnswer::query()->where('uuid',$content->id)->firstOrFail();
+        if($vote_answer->status != VoteAnswer::STATUS_CREATED) {
+            throw ValidationException::withMessages(['file' => 'Ten plik już głosował']);
+        }
         if(count($content->odpowiedzi) === $vote_answer->vote_answer_items()->count()) {
             foreach ($content->odpowiedzi as $vote_answer_item) {
                 if(!$vote_answer->vote_answer_items->contains(function (VoteAnswerItem $item) use ($vote_answer_item) {

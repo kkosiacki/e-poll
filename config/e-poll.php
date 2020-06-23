@@ -15,5 +15,6 @@ return [
 
     'upload_url' => env('VERIFY_UPLOAD_URL', 'https://moj.gov.pl/nforms/rest/signer/file'),
     'verify_url' => env('VERIFY_REST_URL','https://moj.gov.pl/nforms/rest/signer/file/validateDocument'),
+    'can_be_override' => env('CAN_BE_OVERRIDE','true'),
 
 ];
