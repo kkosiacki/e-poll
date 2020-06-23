@@ -22,7 +22,7 @@ class VoteAnswerResource extends JsonResource
             'epuap_podpis' => $this->signature_date,
             'stworzono' => $this->created_at,
             'zarejestrowano' => $this->when($this->updated_at->notEqualTo($this->created_at), $this->updated_at),
-            'odpowiedzi' => VoteAnswerItemResource::collection($this->vote_answer_items)
+            'odpowiedzi' => VoteAnswerItemWithTransResource::collection($this->vote_answer_items)
         ];
     }
 }
