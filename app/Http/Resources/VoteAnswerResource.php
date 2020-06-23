@@ -18,7 +18,7 @@ class VoteAnswerResource extends JsonResource
     {
 
         return [
-            'id' => $this->id,
+            'id' => $this->uuid,
             'status' => $this->status,
             'signature_date' => $this->signature_date,
             'created'=> $this->created_at,
