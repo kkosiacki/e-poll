@@ -29,6 +29,6 @@ class PollQuestion extends Model
 
     public function answers()
     {
-        return $this->hasMany('App\Domain\Poll\PollAnswer');
+        return $this->hasMany('App\Domain\Poll\PollAnswer')->orderBy('answer');
     }
 }

@@ -65,7 +65,7 @@ class PollController extends Controller
                  'answer_slug' => $answer->slug,
                  'count' => $ans->count ];
              return $obj;
-         })->sortBy('answer');
+         });
         return response()->json($answer);
     }
 }
