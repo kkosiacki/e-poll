@@ -29,3 +29,5 @@ Route::get('results/{poll_slug}', 'PollController@getResults');
 
 Route::post('votes','VoteController@vote');
 Route::get('votes/{uuid}','VoteController@getVote');
+
+Route::get('/test', fn() => 'HEHEHEHHE');
