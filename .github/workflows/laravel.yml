@@ -15,4 +15,4 @@ jobs:
     - name: Git checkout
       run: cd /home/evote/backend && git pull
     - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: cd /home/evote/backend && composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
