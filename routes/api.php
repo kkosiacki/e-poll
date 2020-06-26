@@ -18,8 +18,10 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::post('verify', 'VoteController@verifyVote');
-
+// Route::post('verify', 'VoteController@verifyVote');
+Route::post('verify',function() {
+    return abort(500, 'Cisza wyborcza');
+};
 
 Route::get('polls', 'PollController@getPolls');
 
