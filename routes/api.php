@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-// Route::post('verify', 'VoteController@verifyVote');
-Route::post('verify',function() {
-    return abort(500, 'Cisza wyborcza');
-};
+Route::post('verify', 'VoteController@verifyVote');
+// Route::post('verify',function() {
+//     return abort(500, 'Cisza wyborcza');
+// };
 
 Route::get('polls', 'PollController@getPolls');
 
@@ -29,8 +29,8 @@ Route::get('polls/{poll_slug}', 'PollController@getPoll');
 Route::get('results/{poll_slug}', 'PollController@getResults');
 
 
-// Route::post('votes','VoteController@vote');
-Route::post('votes',function() {
-    return abort(500, 'Cisza wyborcza');
-};
+Route::post('votes','VoteController@vote');
+// Route::post('votes',function() {
+//     return abort(500, 'Cisza wyborcza');
+// };
 Route::get('votes/{uuid}','VoteController@getVote');
