@@ -39,14 +39,14 @@ Stanisław Józek ŻÓŁTEK
                 ['answer' => 'Robert BIEDROŃ','slug' => Str::slug('Robert BIEDROŃ')],
                 ['answer' => 'Krzysztof BOSAK','slug' => Str::slug('Krzysztof BOSAK')],
                 ['answer' => 'Szymon Franciszek HOŁOWNIA','slug' => Str::slug('Szymon Franciszek HOŁOWNIA')],
-                ['answer' => 'Marek JAKUBIAK','slug' => Str::slug('Marek JAKUBIAK')]
-                ['answer' => 'Władysław Marcin KOSINIAK-KAMYSZ','slug' => Str::slug('Władysław Marcin KOSINIAK-KAMYSZ')]
-                ['answer' => 'Mirosław Mariusz PIOTROWSKI','slug' => Str::slug('Mirosław Mariusz PIOTROWSKI')]
-                ['answer' => 'Paweł Jan TANAJNO','slug' => Str::slug('Paweł Jan TANAJNO')]
-                ['answer' => 'Rafał Kazimierz TRZASKOWSKI','slug' => Str::slug('Rafał Kazimierz TRZASKOWSKI')]
-                ['answer' => 'Waldemar Włodzimierz WITKOWSKI','slug' => Str::slug('Waldemar Włodzimierz WITKOWSKI')]
-                ['answer' => 'Stanisław Józek ŻÓŁTEK','slug' => Str::slug('Stanisław Józek ŻÓŁTEK')]
-                ['answer' => 'Zaden','slug' => Str::slug('Zaden')]
+                ['answer' => 'Marek JAKUBIAK','slug' => Str::slug('Marek JAKUBIAK')],
+                ['answer' => 'Władysław Marcin KOSINIAK-KAMYSZ','slug' => Str::slug('Władysław Marcin KOSINIAK-KAMYSZ')],
+                ['answer' => 'Mirosław Mariusz PIOTROWSKI','slug' => Str::slug('Mirosław Mariusz PIOTROWSKI')],
+                ['answer' => 'Paweł Jan TANAJNO','slug' => Str::slug('Paweł Jan TANAJNO')],
+                ['answer' => 'Rafał Kazimierz TRZASKOWSKI','slug' => Str::slug('Rafał Kazimierz TRZASKOWSKI')],
+                ['answer' => 'Waldemar Włodzimierz WITKOWSKI','slug' => Str::slug('Waldemar Włodzimierz WITKOWSKI')],
+                ['answer' => 'Stanisław Józek ŻÓŁTEK','slug' => Str::slug('Stanisław Józek ŻÓŁTEK')],
+                ['answer' => 'Zaden','slug' => Str::slug('Zaden')],
             ]
         );
         // $poll1->questions()->create(['type' => PollQuestion::MULTI,'question' => 'Ulubione knajpy','slug' => Str::slug('Ulubione knajpy')])->answers()->createMany(
