@@ -18,11 +18,12 @@ class VoteAnswerResource extends JsonResource
     {
 
         return [
+            'id' => $this->uuid,
             'status' => $this->status,
-            'epuap_podpis' => $this->signature_date,
-            'stworzono' => $this->created_at,
-            'zarejestrowano' => $this->when($this->updated_at->notEqualTo($this->created_at), $this->updated_at),
-            'odpowiedzi' => VoteAnswerItemResource::collection($this->vote_answer_items)
+            'signature_date' => $this->signature_date,
+            'created'=> $this->created_at,
+            'uploaded' => $this->when($this->updated_at->notEqualTo($this->created_at), $this->updated_at),
+            'answers' => VoteAnswerItemWithTransResource::collection($this->vote_answer_items)
         ];
     }
 }
