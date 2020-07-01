@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Poll\Poll;
+use App\Domain\Poll\PollQuestion;
 use Illuminate\Database\Seeder;
 
 class POPSecondRoundSeeder extends Seeder
